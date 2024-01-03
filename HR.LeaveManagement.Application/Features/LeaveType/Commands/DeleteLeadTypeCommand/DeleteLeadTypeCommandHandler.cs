@@ -1,4 +1,5 @@
 ﻿using HR.LeaveManagement.Application.Contracts.Persistence;
+using HR.LeaveManagement.Application.Exceptions;
 using MediatR;
 
 namespace HR.LeaveManagement.Application.Features.LeaveType.Commands.DeleteLeadTypeCommand;
@@ -14,6 +15,11 @@ public class DeleteLeadTypeCommandHandler : IRequestHandler<DeleteLeadTypeComman
     {
         var leadTypeToDelete = await _leaveTypeRepository.GetByIdAsync(request.Id);
         
+        if (leadTypeToDelete == null)
+        {
+            throw new NotFoundException(nameof(LeaveType), request.Id);
+        }
+
         await _leaveTypeRepository.DeleteAsync(leadTypeToDelete);
 
         return Unit.Value;
